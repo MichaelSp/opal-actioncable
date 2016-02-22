@@ -18,7 +18,7 @@ class ActionCable::Subscriptions
   end
 
   def create mixin, params={}
-    params[:channel] ||= channel_name || mixin.class.name
+    params[:channel] ||= mixin.name
     mixin.new self, params
   end
 end

@@ -24,14 +24,15 @@ Or install it yourself as:
     require 'opal-actioncable'
 
     class TestChannel < ActionCable::Subscription
-        def connected
-        end
+      def connected
+        perform 'send', {data: 23}
+      end
 
-        def disconnected
-        end
+      def disconnected
+      end
 
-        def received data
-        end
+      def received data
+      end
     end
 
     consumer = ActionCable.createConsumer("/cable")

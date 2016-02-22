@@ -1,12 +1,7 @@
 
-require 'opal-actioncable/connection'
-require 'opal-actioncable/connection_monitor'
-require 'opal-actioncable/consumer'
-require 'opal-actioncable/subscription'
-require 'opal-actioncable/subscriptions'
+require 'action_cable'
 
-
-module ActionCable
+class ActionCable
 
   class << self
     def create_consumer url
@@ -29,3 +24,9 @@ module ActionCable
     end
   end
 end
+
+require 'action_cable/connection'
+require 'action_cable/connection_monitor'
+require 'action_cable/consumer'
+require 'action_cable/subscription'
+require 'action_cable/subscriptions'
