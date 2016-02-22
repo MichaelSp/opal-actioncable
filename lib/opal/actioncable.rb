@@ -1,7 +1,4 @@
 require "opal/actioncable/version"
+require 'opal'
 
-module Opal
-  module Actioncable
-    # Your code goes here...
-  end
-end
+Opal.append_path File.expand_path('../../../opal', __FILE__)
