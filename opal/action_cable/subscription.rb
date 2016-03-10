@@ -17,7 +17,7 @@ class ActionCable::Subscription
   end
 
   def perform action, data
-    `#{@native}.perform(action, data)`
+    `#{@native}.perform(action, #{data.to_n})`
   end
 
 end
