@@ -6,6 +6,7 @@ class ActionCable::Connection
     %x{
       Opal.defn(self.$class(), 'isOpen', #{@native}.isOpen);
       Opal.defn(self.$class(), 'isState', #{@native}.isState);
+      Opal.defn(self.$class(), 'isAlive', #{@native}.isAlive);
       Opal.defn(self.$class(), 'send', #{@native}.send);
       Opal.defn(self.$class(), 'open', #{@native}.open);
       Opal.defn(self.$class(), 'close', #{@native}.close);
