@@ -35,7 +35,7 @@ Or install it yourself as:
       end
     end
 
-    consumer = ActionCable.createConsumer("/cable")
+    consumer = ActionCable.createConsumer
     consumer.subscriptions.create TestChannel
 
     # or

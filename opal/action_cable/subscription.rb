@@ -1,9 +1,19 @@
 class ActionCable::Subscription
   include Native::Helpers
 
-  def initialize subscriptions, params
-    @native = `new ActionCable.Subscription(#{subscriptions}, #{params.to_n})`
-    %x{Opal.defn(self.$class(), 'perform', #{@native}.perform)}
+  def initialize consumer, params
+    @native = `new ActionCable.Subscription(#{consumer}, #{params.to_n})`
+    %x{
+      Opal.defn(self.$class(), 'perform', #{self}.$perform)
+      if (#{respond_to?(:disconnected)}) Opal.defn(self.$class(), 'disconnected', #{self}.$disconnected)
+      if (#{respond_to?(:rejected)}) Opal.defn(self.$class(), 'rejected', #{self}.$rejected)
+      if (#{respond_to?(:received)}) Opal.defn(self.$class(), 'received', #{self}.$_received)
+      if (#{respond_to?(:connected)}) Opal.defn(self.$class(), 'connected', #{self}.$connected)
+
+      Opal.defn(self.$class(), 'send', #{@native}.send)
+      Opal.defn(self.$class(), 'unsubscribe', #{@native}.unsubscribe)
+      Opal.defn(self.$class(), 'identifier', #{@native}.identifier)
+    }
 
     self.class.instance_methods(false).each do |method_name|
       next if method_name == :perform
@@ -16,8 +26,15 @@ class ActionCable::Subscription
     end
   end
 
-  def perform action, data
-    `#{@native}.perform(action, #{data.to_n})`
+  def perform action, data={}
+    data ||= {}
+    data[:action] = action
+    `#{@native}.send(#{data.to_n})`
+  end
+
+  private
+  def _received data
+    received Hash.new data
   end
 
 end
