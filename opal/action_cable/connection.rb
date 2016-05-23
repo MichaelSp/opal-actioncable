@@ -3,6 +3,9 @@ class ActionCable::Connection
 
   def initialize consumer
     @native = `new ActionCable.Connection(#{consumer})`
+    @subscriptions = consumer.subscriptions
+    @monitor = ConnectionMonitor.new self
+
     %x{
       Opal.defn(self.$class(), 'send', function(){ return self.$delegate_native('send', arguments); });
       Opal.defn(self.$class(), 'open', function(){ return self.$delegate_native('open', arguments); });
@@ -20,10 +23,11 @@ class ActionCable::Connection
   end
 
   def send data
+    data = `#{`#{data}['$is_a?']` ? data.to_n : data}`
     `#{@native}.send(#{data})`
   end
 
-  def delegate_native name, args
+  def delegate_native name, args=nil
     `#{@native}[#{name}].apply(#{@native}, args)`
   end
 

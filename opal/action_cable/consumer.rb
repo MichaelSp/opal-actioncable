@@ -1,31 +1,32 @@
-class ActionCable::Connection
+class ActionCable::Consumer
   include Native::Helpers
+  attr_reader :subscriptions, :connection, :connectionMonitor
 
-  def initialize consumer
-    @native = `new ActionCable.Connection(#{consumer})`
+  def initialize url
+    @url = url
+    @subscriptions = ActionCable::Subscriptions.new self
+    @connection = ActionCable::Connection.new self
     %x{
-      Opal.defn(self.$class(), 'send', function(){ return self.$delegate_native('send', arguments); });
-      Opal.defn(self.$class(), 'open', function(){ return self.$delegate_native('open', arguments); });
-      Opal.defn(self.$class(), 'close', function(){ return self.$delegate_native('close', arguments); });
-      Opal.defn(self.$class(), 'reopen', function(){ return self.$delegate_native('reopen', arguments); });
-      Opal.defn(self.$class(), 'getProtocol', function(){ return self.$delegate_native('getProtocol', arguments); });
-      Opal.defn(self.$class(), 'isOpen', function(){ return self.$delegate_native('isOpen', arguments); });
-      Opal.defn(self.$class(), 'isActive', function(){ return self.$delegate_native('isActive', arguments); });
-      Opal.defn(self.$class(), 'isProtocolSupported', function(){ return self.$delegate_native('isProtocolSupported', arguments); });
-      Opal.defn(self.$class(), 'isState', function(){ return self.$delegate_native('isState', arguments); });
-      Opal.defn(self.$class(), 'getState', function(){ return self.$delegate_native('getState', arguments); });
-      Opal.defn(self.$class(), 'installEventHandlers', function(){ return self.$delegate_native('installEventHandlers', arguments); });
-      Opal.defn(self.$class(), 'uninstallEventHandlers', function(){ return self.$delegate_native('uninstallEventHandlers', arguments); });
+        Opal.defn(self.$class(), 'send', #{self}.$send);
+        Opal.defn(self.$class(), 'connect', #{self}.$connect);
+        Opal.defn(self.$class(), 'disconnect', #{self}.$disconnect);
+        Opal.defn(self.$class(), 'ensureActiveConnection', #{self}.$ensureActiveConnection);
       }
   end
 
   def send data
-    `#{@native}.send(#{data})`
+    @connection.send data
   end
 
-  def delegate_native name, args
-    `#{@native}[#{name}].apply(#{@native}, args)`
+  def connect
+    `#{@connection}.open()`
   end
 
-
+  def disconnect
+    `#{@connection}.close({allowReconnect: false})`
+  end
+  
+  def ensureActiveConnection
+    connect if `!#{@connection}.isActive()`
+  end
 end
