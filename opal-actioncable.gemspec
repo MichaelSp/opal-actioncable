@@ -19,5 +19,5 @@ Gem::Specification.new do |spec|
   spec.test_files    = `git ls-files -- {test,spec,features}/*`.split("\n")
   spec.require_paths = ["lib"]
 
-  spec.add_dependency 'opal'
+  spec.add_dependency 'opal', '~> 0.9'
 end

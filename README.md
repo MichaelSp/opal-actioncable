@@ -43,6 +43,20 @@ Or install it yourself as:
     ChatChannel =  TestChannel
     consumer.subscriptions.create ChatChannel, {channel: 'Chat', room: 'default'}
 
+### Skip client-side dispatching
+    
+If you send your messages in the format `{action: ..., data: ...}`
+    
+    ActionCable.server.broadcast "channel", {action: 'action_name', data: {some: 'data'}}
+    
+And if `action` and `data` are the only keys in your hash, you can catch it on client side like this:
+    
+    class TestChannel < ActionCable::Subscription
+       def action_name params
+         puts params # > {some: 'data'}
+       end
+    end
+    
 ## Development
 
 After checking out the repo, run `bin/setup` to install dependencies. Then, run `bin/console` for an interactive prompt that will allow you to experiment.

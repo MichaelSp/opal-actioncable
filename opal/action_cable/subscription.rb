@@ -5,9 +5,9 @@ class ActionCable::Subscription
     @native = `new ActionCable.Subscription(#{consumer}, #{params.to_n})`
     %x{
       Opal.defn(self.$class(), 'perform', #{self}.$perform)
+      Opal.defn(self.$class(), 'received', #{self}.$_received)
       if (#{respond_to?(:disconnected)}) Opal.defn(self.$class(), 'disconnected', #{self}.$disconnected)
       if (#{respond_to?(:rejected)}) Opal.defn(self.$class(), 'rejected', #{self}.$rejected)
-      if (#{respond_to?(:received)}) Opal.defn(self.$class(), 'received', #{self}.$_received)
       if (#{respond_to?(:connected)}) Opal.defn(self.$class(), 'connected', #{self}.$connected)
 
       Opal.defn(self.$class(), 'send', #{@native}.send)
@@ -34,7 +34,12 @@ class ActionCable::Subscription
 
   private
   def _received data
-    received Hash.new data
+    data = Hash.new data
+    if (data.keys == ["action", "data"])
+      send(data["action"], data["data"])
+    else
+      received Hash.new data if respond_to?(:received)
+    end
   end
 
 end
