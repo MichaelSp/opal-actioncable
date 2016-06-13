@@ -20,43 +20,50 @@ Or install it yourself as:
 
 ## Usage
 
-    # assets/javascript/application.rb
-    require 'opal-actioncable'
+```ruby
+# assets/javascript/application.rb
+require 'opal-actioncable'
 
-    class TestChannel < ActionCable::Subscription
-      def connected
-        perform 'send', {data: 23}
-      end
+class TestChannel < ActionCable::Subscription
+  def connected
+    perform 'send', {data: 23}
+  end
 
-      def disconnected
-      end
+  def disconnected
+  end
 
-      def received data
-      end
-    end
+  def received data
+  end
+end
 
-    consumer = ActionCable.createConsumer
-    consumer.subscriptions.create TestChannel
+consumer = ActionCable.createConsumer
+consumer.subscriptions.create TestChannel
 
-    # or
+# or
 
-    ChatChannel =  TestChannel
-    consumer.subscriptions.create ChatChannel, {channel: 'Chat', room: 'default'}
+ChatChannel =  TestChannel
+consumer.subscriptions.create ChatChannel, {channel: 'Chat', room: 'default'}
+```
 
 ### Skip client-side dispatching
-    
+
 If you send your messages in the format `{action: ..., data: ...}`
-    
-    ActionCable.server.broadcast "channel", {action: 'action_name', data: {some: 'data'}}
-    
+
+```ruby
+ActionCable.server.broadcast "channel", {action: 'action_name', data: {some: 'data'}}
+```
+
 And if `action` and `data` are the only keys in your hash, you can catch it on client side like this:
-    
-    class TestChannel < ActionCable::Subscription
-       def action_name params
-         puts params # > {some: 'data'}
-       end
-    end
-    
+
+```ruby
+class TestChannel < ActionCable::Subscription
+  def action_name params
+    puts params # > {some: 'data'}
+  end
+end
+```
+
+
 ## Development
 
 After checking out the repo, run `bin/setup` to install dependencies. Then, run `bin/console` for an interactive prompt that will allow you to experiment.
