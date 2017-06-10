@@ -4,7 +4,7 @@ class ActionCable::Connection
   def initialize consumer
     @native = `new ActionCable.Connection(#{consumer})`
     @subscriptions = consumer.subscriptions
-    @monitor = ConnectionMonitor.new self
+    @monitor = ActionCable::ConnectionMonitor.new self
 
     %x{
       Opal.defn(self.$class(), 'send', function(){ return self.$delegate_native('send', arguments); });
@@ -19,7 +19,7 @@ class ActionCable::Connection
       Opal.defn(self.$class(), 'getState', function(){ return self.$delegate_native('getState', arguments); });
       Opal.defn(self.$class(), 'installEventHandlers', function(){ return self.$delegate_native('installEventHandlers', arguments); });
       Opal.defn(self.$class(), 'uninstallEventHandlers', function(){ return self.$delegate_native('uninstallEventHandlers', arguments); });
-      }
+    }
   end
 
   def send data
